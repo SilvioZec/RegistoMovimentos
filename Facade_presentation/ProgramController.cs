@@ -1,4 +1,5 @@
-﻿using RegistoMovimentos.Business_code;
+﻿using Microsoft.EntityFrameworkCore;
+using RegistoMovimentos.Business_code;
 using RegistoMovimentos.Business_data;
 using RegistoMovimentos.Persistence;
 using System;
@@ -18,7 +19,7 @@ namespace RegistoMovimentos.Facade_presentation
         //============================================================================== CRUD CLIENTES
         public void add(Cliente cliente) { db.Add(cliente); db.SaveChanges(); }
         public void remove(Cliente cliente) { db.Remove(cliente); db.SaveChanges(); }
-        public void update(Cliente cliente) { db.Update(cliente); db.SaveChanges();}
+        public void update(Cliente cliente) { db.Update(cliente); db.SaveChanges(); }
 
         //============================================================================== CRUD MOVIMENTOS
         public void add(Movimento movimento)
@@ -40,22 +41,31 @@ namespace RegistoMovimentos.Facade_presentation
             var movimentos = from m in db.Movimentos
                              join c in db.Clientes on m.ClienteId equals c.Id
                              join tm in db.Tipos_movimento on m.Tipo_movimentoId equals tm.Id
+                             orderby m.Data
                              select new Movimento_datagrid
                              {
                                  Id = m.Id,
-                                 Data = m.Data,
+                                 Data = m.Data.ToString("dd/MM/yyyy"),
                                  Valor = m.Valor,
                                  Marcador = m.Marcador,
                                  Descricao = m.Descricao,
                                  Cliente = c.Designacao,
-                                 TipoMovimento = tm.Descricao
+                                 TipoMovimento = tm.Descricao,
+                                 Saldo_parcial = db.Movimentos
+                                            //somar creditos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 2)
+                                            .Sum(x => x.Valor)
+                                        //somar debitos
+                                        - db.Movimentos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 1)
+                                            .Sum(x => x.Valor)
                              };
             return movimentos.ToList();
         }
 
         public List<Cliente> listarClientes() { return db.Clientes.ToList(); }
 
-        public Movimento buscarMovimento (int id_movimento)
+        public Movimento buscarMovimento(int id_movimento)
         {
             return db.Movimentos.Find(id_movimento);
         }
@@ -71,7 +81,7 @@ namespace RegistoMovimentos.Facade_presentation
                     Saldo_tipo = "",
                     Valor = db.Movimentos
                         .Where(m => m.ClienteId == c.Id)
-                        .Sum(m => m.Marcador == 'C' ? m.Valor : -m.Valor)
+                        .Sum(m => m.Tipo_movimentoId == 2 ? m.Valor : -m.Valor)
                 })
                 .ToList();
 
@@ -113,41 +123,169 @@ namespace RegistoMovimentos.Facade_presentation
                              select new Movimento_datagrid
                              {
                                  Id = m.Id,
-                                 Data = m.Data,
+                                 Data = m.Data.ToString("dd/MM/yyyy"),
                                  Valor = m.Valor,
                                  Marcador = m.Marcador,
                                  Descricao = m.Descricao,
                                  Cliente = c.Designacao,
-                                 TipoMovimento = tm.Descricao
+                                 TipoMovimento = tm.Descricao,
+                                 Saldo_parcial = db.Movimentos
+                                            //somar creditos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 2)
+                                            .Sum(x => x.Valor)
+                                        //somar debitos
+                                        - db.Movimentos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 1)
+                                            .Sum(x => x.Valor)
                              };
             return movimentos.ToList();
         }
 
-        public List <Cliente> listarClienteMarcador (char? marcador)
+        public List<Movimento_datagrid> listarMovimentosCliente(int idCliente, string ano)
         {
-            var clientes = from c in db.Clientes
-                           where marcador == null ? c.Marcador == null : c.Marcador == marcador
-                           select c;
-            return clientes.ToList();
+            var movimentos = from m in db.Movimentos
+                             join c in db.Clientes on m.ClienteId equals c.Id
+                             join tm in db.Tipos_movimento on m.Tipo_movimentoId equals tm.Id
+                             where c.Id == idCliente && m.Data.Year.ToString() == ano // filtrar por ano
+                             orderby m.Data
+                             select new Movimento_datagrid
+                             {
+                                 Id = m.Id,
+                                 Data = m.Data.ToString("dd/MM/yyyy"),
+                                 Valor = m.Valor,
+                                 Marcador = m.Marcador,
+                                 Descricao = m.Descricao,
+                                 Cliente = c.Designacao,
+                                 TipoMovimento = tm.Descricao,
+                                 Saldo_parcial = db.Movimentos
+                                            //somar creditos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 2)
+                                            .Sum(x => x.Valor)
+                                        //somar debitos
+                                        - db.Movimentos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 1)
+                                            .Sum(x => x.Valor)
+                             };
+            return movimentos.ToList();
         }
 
-        public List <Movimento_datagrid> listarMovimentoMarcador (char? marcador)
+        public List<Movimento_datagrid> listarMovimentosCliente(int idCliente, string ano, string mes)
+        {
+            var movimentos = from m in db.Movimentos
+                             join c in db.Clientes on m.ClienteId equals c.Id
+                             join tm in db.Tipos_movimento on m.Tipo_movimentoId equals tm.Id
+                             where c.Id == idCliente
+                                   && m.Data.Year.ToString() == ano
+                                   && m.Data.Month.ToString() == mes // filtra por mes
+                             orderby m.Data
+                             select new Movimento_datagrid
+                             {
+                                 Id = m.Id,
+                                 Data = m.Data.ToString("dd/MM/yyyy"),
+                                 Valor = m.Valor,
+                                 Marcador = m.Marcador,
+                                 Descricao = m.Descricao,
+                                 Cliente = c.Designacao,
+                                 TipoMovimento = tm.Descricao,
+                                 Saldo_parcial = db.Movimentos
+                                        //somar creditos
+                                        .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 2)
+                                        .Sum(x => x.Valor)
+                                        //somar debitos
+                                        - db.Movimentos
+                                        .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 1)
+                                        .Sum(x => x.Valor)
+                             };
+            return movimentos.ToList();
+        }
+
+        public List<Saldo> listarClienteMarcador(char? marcador)
+        {
+            var saldos = db.Clientes
+                .Where(c => marcador == null ? c.Marcador == null : c.Marcador == marcador)
+                .Select(c => new Saldo
+                {
+                    Id = c.Id,
+                    Nif = c.Nif,
+                    Nome_Cliente = c.Designacao,
+                    Saldo_tipo = "",
+                    Valor = db.Movimentos
+                        .Where(m => m.ClienteId == c.Id)
+                        .Sum(m => m.Tipo_movimentoId == 2 ? m.Valor : -m.Valor)
+                })
+                .ToList();
+
+            // Atualiza o campo Saldo_tipo com base no Valor calculado
+            foreach (var saldo in saldos)
+            {
+                saldo.Saldo_tipo = saldo.Valor >= 0 ? "Crédito" : "Débito";
+            }
+
+            return saldos;
+        }
+
+
+        public List<Movimento_datagrid> listarMovimentoMarcador(char? marcador)
         {
             var movimentos = from m in db.Movimentos
                              join c in db.Clientes on m.ClienteId equals c.Id
                              join tm in db.Tipos_movimento on m.Tipo_movimentoId equals tm.Id
                              where m.Marcador == marcador
+                             orderby m.Data
                              select new Movimento_datagrid
                              {
                                  Id = m.Id,
-                                 Data = m.Data,
+                                 Data = m.Data.ToString("dd/MM/yyyy"),
                                  Valor = m.Valor,
                                  Marcador = m.Marcador,
                                  Descricao = m.Descricao,
                                  Cliente = c.Designacao,
-                                 TipoMovimento = tm.Descricao
+                                 TipoMovimento = tm.Descricao,
+                                 Saldo_parcial = db.Movimentos
+                                            //somar creditos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 2)
+                                            .Sum(x => x.Valor)
+                                        //somar debitos
+                                        - db.Movimentos
+                                            .Where(x => x.ClienteId == m.ClienteId && x.Data <= m.Data && x.Tipo_movimentoId == 1)
+                                            .Sum(x => x.Valor)
                              };
             return movimentos.ToList();
+        }
+
+        public List<Saldo> listarSaldosData(DateTime data)
+        {
+            var saldos = db.Clientes
+                .Select(c => new Saldo
+                {
+                    Id = c.Id,
+                    Nif = c.Nif,
+                    Nome_Cliente = c.Designacao,
+                    Saldo_tipo = "",
+                    Valor = db.Movimentos
+                        .Where(m => m.ClienteId == c.Id && m.Data <= data) // Filtra movimentos com data menor ou igual à data fornecida
+                        .Sum(m => m.Tipo_movimentoId == 2 ? m.Valor : -m.Valor)
+                })
+                .ToList();
+
+            // Atualiza o campo Saldo_tipo com base no Valor calculado
+            foreach (var saldo in saldos)
+            {
+                saldo.Saldo_tipo = saldo.Valor >= 0 ? "Crédito" : "Débito";
+            }
+
+
+            // Mostrar todos os clientes
+            return saldos;
+
+        }
+
+        public List<string> listarAnosMovimentos()
+        {
+            List<string> anos = db.Movimentos.Select(m => m.Data.Year.ToString()).Distinct().ToList();
+            // Adicionando a string "Todos" como primeiro elemento da lista
+            anos.Insert(0, "Todos");
+            return anos;
         }
     }
 }

@@ -10,12 +10,13 @@ namespace RegistoMovimentos.Business_code
     {
 
         public int Id { get; set; }
-        public DateTime Data { get; set; }
+        public string Data { get; set; }
         public decimal Valor { get; set; }
         public char? Marcador { get; set; }
         public string? Descricao { get; set; }
         public string Cliente { get; set; }
         public string TipoMovimento { get; set; }
+        public decimal Saldo_parcial { get; set; }
 
     }
 }

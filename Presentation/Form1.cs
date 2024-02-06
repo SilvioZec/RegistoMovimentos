@@ -2,6 +2,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using RegistoMovimentos.Business_code;
 using RegistoMovimentos.Business_data;
 using RegistoMovimentos.Facade_presentation;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace RegistoMovimentos
@@ -28,6 +29,9 @@ namespace RegistoMovimentos
             //carregar as comboboxes de Clientes.
             atualizaCbxCliente_Movimentos();
             atualizaCbxClientes_Listagens();
+            //carrega combobox listagens com anos
+            atualizaCbxAnos_Listagens();
+            cbxMeses_Listagens.SelectedIndex = 0;
 
             //carregar as comboboxes de tipo_movimento.
             List<object> tiposMovimento = new List<object>
@@ -43,7 +47,6 @@ namespace RegistoMovimentos
             comboBoxTipo_Movimentos.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBoxTipo_Movimentos.AutoCompleteSource = AutoCompleteSource.ListItems;
 
-            monthCalendar_Listagens.Hide();
         }
         //============================================================================================================================== METODOS UTEIS A CLASSE
         private void atualizaDtgClientes()
@@ -144,15 +147,21 @@ namespace RegistoMovimentos
         }
         private void atualizaDtgMovimentos()
         {
-            dtgMovimentos.DataSource = controller.listarMovimentos();
+            List <Movimento_datagrid> lista = controller.listarMovimentos();
+            dtgMovimentos.DataSource = lista;
             dtgMovimentos.Columns["Id"].ReadOnly = true;
             dtgMovimentos.Columns["Cliente"].ReadOnly = true;
             dtgMovimentos.Columns["TipoMovimento"].ReadOnly = true;
+
+            if (lista.Count > 0)
+            {
+                dtgMovimentos.FirstDisplayedScrollingRowIndex = lista.Count - 1;
+            }
         }
         private void btnAdd_Movimentos_Click(object sender, EventArgs e)
         {
             Movimento movimento = new Movimento();
-            movimento.Data = dateTimePicker_Movimentos.Value.Date;
+            movimento.Data = Convert.ToDateTime(dateTimePicker_Movimentos.Value.Date.ToShortDateString());
             movimento.Valor = Convert.ToDecimal(maskedTextBox_Movimentos.Text);
             movimento.Marcador = string.IsNullOrEmpty(txtMarcador_Movimentos.Text) ? null : Convert.ToChar(txtMarcador_Movimentos.Text.ToUpper());
             movimento.Descricao = txtDescricao_Movimentos.Text;
@@ -165,12 +174,16 @@ namespace RegistoMovimentos
             txtMarcador_Movimentos.Clear();
             txtDescricao_Movimentos.Clear();
 
-
+            //atualiza combobox Listagem de anos, para caso um novo ano seja adicionado
+            atualizaCbxAnos_Listagens();
         }
         private void btnRemove_Movimentos_Click(object sender, EventArgs e)
         {
             controller.remove(Convert.ToInt32(dtgMovimentos.SelectedRows[0].Cells[0].Value));
             atualizaDtgMovimentos();
+
+            //atualiza combobox Listagem de anos, para caso um novo ano seja removido
+            atualizaCbxAnos_Listagens();
         }
         private void txtMarcador_Movimentos_TextChanged(object sender, EventArgs e)
         {
@@ -187,7 +200,7 @@ namespace RegistoMovimentos
         private void btnUpdate_Movimentos_Click(object sender, EventArgs e)
         {
             Movimento movimento = controller.buscarMovimento(Convert.ToInt32(dtgMovimentos.SelectedRows[0].Cells[0].Value));
-            movimento.Data = Convert.ToDateTime(dtgMovimentos.SelectedRows[0].Cells[1].Value);
+            movimento.Data = DateTime.ParseExact(dtgMovimentos.SelectedRows[0].Cells[1].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
             movimento.Valor = Convert.ToDecimal(dtgMovimentos.SelectedRows[0].Cells[2].Value);
             movimento.Marcador = Convert.ToChar(dtgMovimentos.SelectedRows[0].Cells[3].Value);
             movimento.Descricao = dtgMovimentos.SelectedRows[0].Cells[4].Value.ToString();
@@ -195,6 +208,9 @@ namespace RegistoMovimentos
             controller.update(movimento);
 
             atualizaDtgMovimentos();
+
+            //atualiza combobox Listagem de anos, para caso um novo ano seja adicionado/removido
+            atualizaCbxAnos_Listagens();
         }
         private void dtgMovimentos_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
@@ -202,6 +218,12 @@ namespace RegistoMovimentos
         }
 
         //============================================================================================================================== TAB LISTAGENS
+        private void atualizaCbxAnos_Listagens()
+        {
+            cbxAnos_Listagem.DataSource = controller.listarAnosMovimentos();
+            cbxAnos_Listagem.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cbxAnos_Listagem.AutoCompleteSource = AutoCompleteSource.ListItems;
+        }
         private void atualizaCbxClientes_Listagens()
         {
             cbxClientes_Listagens.DataSource = controller.listarClientes();
@@ -213,30 +235,11 @@ namespace RegistoMovimentos
             cbxClientes_Listagens.AutoCompleteSource = AutoCompleteSource.ListItems;
         }
 
-        private void btnListarMes_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void monthCalendar_Listagens_DateChanged(object sender, DateRangeEventArgs e)
-        {
-            DateTime selectedDate = monthCalendar_Listagens.SelectionStart;
-            string mesAno = selectedDate.ToString("MMMM yyyy");
-            txtListaMes_Listagens.Text = mesAno;
-            monthCalendar_Listagens.Hide();
-        }
-
-        private void btnMes_Listagens_Click(object sender, EventArgs e)
-        {
-            monthCalendar_Listagens.CalendarDimensions = new Size(1, 1);
-            monthCalendar_Listagens.MaxSelectionCount = 1;
-            monthCalendar_Listagens.Show();
-        }
-
         private void btnListaSaldos_Click(object sender, EventArgs e)
         {
             dtgListagens.DataSource = controller.listarSaldos(chkDebito.Checked, chkCredito.Checked);
         }
-
+        // impede que mais de um char seja introduzido na textbox
         private void txtMarcador_Listagens_TextChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
@@ -248,7 +251,7 @@ namespace RegistoMovimentos
                 textBox.Select(1, 0); // Coloca o cursor no final do texto
             }
         }
-
+        // impede que mais de um char seja introduzido na textbox
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
@@ -263,7 +266,22 @@ namespace RegistoMovimentos
 
         private void btnHistoricoCliente_Click(object sender, EventArgs e)
         {
-            dtgListagens.DataSource = controller.listarMovimentosCliente(Convert.ToInt32(cbxClientes_Listagens.SelectedValue));
+            if (cbxMeses_Listagens.Text == "*" && cbxAnos_Listagem.Text == "Todos")
+            {
+                dtgListagens.DataSource = controller.listarMovimentosCliente(Convert.ToInt32(cbxClientes_Listagens.SelectedValue));
+            }
+            if (cbxMeses_Listagens.Text != "*" && cbxAnos_Listagem.Text == "Todos")
+            {
+                MessageBox.Show("Escolha o ano para listar um mês", "Erro");
+            }
+            if (cbxMeses_Listagens.Text != "*" && cbxAnos_Listagem.Text != "Todos")
+            {
+                dtgListagens.DataSource = controller.listarMovimentosCliente(Convert.ToInt32(cbxClientes_Listagens.SelectedValue), cbxAnos_Listagem.Text, cbxMeses_Listagens.Text);
+            }
+            if (cbxMeses_Listagens.Text == "*" && cbxAnos_Listagem.Text != "Todos")
+            {
+                dtgListagens.DataSource = controller.listarMovimentosCliente(Convert.ToInt32(cbxClientes_Listagens.SelectedValue), cbxAnos_Listagem.Text);
+            }
         }
 
         private void btnListaMarcadorCliente_Click(object sender, EventArgs e)
@@ -274,6 +292,11 @@ namespace RegistoMovimentos
         private void btnListaMarcadorMovimento_Click(object sender, EventArgs e)
         {
             dtgListagens.DataSource = controller.listarMovimentoMarcador(string.IsNullOrEmpty(textBox1.Text) ? null : Convert.ToChar(textBox1.Text.ToUpper()));
+        }
+
+        private void btnSaldosMes_Listagens_Click(object sender, EventArgs e)
+        {
+            dtgListagens.DataSource = controller.listarSaldosData(dtpSaldo_Listagens.Value);
         }
     }
 }
