@@ -1,0 +1,1 @@
+Projeto para registo de movimentos financeiros a debito e a credito. Também é possivel exportar qualquer listagem para excel ou pdf. Acesso a base de dados esta protegida, portanto programa nao funcionará.
