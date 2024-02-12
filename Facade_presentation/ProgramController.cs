@@ -291,7 +291,7 @@ namespace RegistoMovimentos.Facade_presentation
 
         //============================================================================== EXPORTAR
 
-        public void exportar(DataGridView dtg, string fileName, string filePath, int tipo)
+        public void exportar(DataGridView dtg, string filePath, string fileName, int tipo)
         {
             if (tipo == 1)
             {

@@ -29,19 +29,19 @@ namespace RegistoMovimentos.Persistence
             }
 
             for (int i = 0; i < dgv.Rows.Count; i++)
-{
-    for (int j = 0; j < dgv.Columns.Count; j++)
-    {
-        if (dgv.Rows[i].Cells[j].Value != null) // Verifica se a célula não é nula
-        {
-            ws.Cells[i + 2, j + 1] = dgv.Rows[i].Cells[j].Value.ToString();
-        }
-        else
-        {
-            ws.Cells[i + 2, j + 1] = ""; // Se a célula for nula, insere uma string vazia na planilha
-        }
-    }
-}
+            {
+                for (int j = 0; j < dgv.Columns.Count; j++)
+                {
+                    if (dgv.Rows[i].Cells[j].Value != null) // Verifica se a célula não é nula
+                    {
+                        ws.Cells[i + 2, j + 1] = dgv.Rows[i].Cells[j].Value.ToString();
+                    }
+                    else
+                    {
+                        ws.Cells[i + 2, j + 1] = ""; // Se a célula for nula, insere uma string vazia na planilha
+                    }
+                }
+            }
 
             // Ajusta o formato da planilha
             ws.Columns.AutoFit();
@@ -49,7 +49,7 @@ namespace RegistoMovimentos.Persistence
             // Salva o arquivo Excel
             try
             {
-                wb.SaveAs(caminho + "\\" + nomeDoArquivo + ".xlsx");
+                wb.SaveAs(caminho + "\\" + nomeDoArquivo);
                 MessageBox.Show("Arquivo Excel salvo com sucesso!");
             }
             catch (Exception ex)
@@ -58,6 +58,9 @@ namespace RegistoMovimentos.Persistence
             }
 
             // Libera os recursos
+            // Fecha e libera os recursos do arquivo Excel
+            wb.Close();
+            excelApp.Quit();
             ReleaseObject(ws);
             ReleaseObject(wb);
             ReleaseObject(excelApp);

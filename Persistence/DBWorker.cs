@@ -26,7 +26,7 @@ namespace RegistoMovimentos.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=62.28.39.135,62444;Initial Catalog=MovimentosSilvio;User ID=EFASILVIO;Password=zechin031294;Trust server certificate = true;");
+            optionsBuilder.UseSqlServer(@"Data Source=xx.xx.xx.xxx,xxxx;Initial Catalog=basededadosx;User ID=login;Password=******;Trust server certificate = true;");
         }
 
     }

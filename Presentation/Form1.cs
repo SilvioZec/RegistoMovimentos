@@ -313,7 +313,8 @@ namespace RegistoMovimentos
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 // Chama a função Exportar passando o DataGridView, o caminho e o nome do arquivo e tipo
-                controller.exportar(dtgMovimentos, Path.GetDirectoryName(saveFileDialog.FileName), Path.GetFileNameWithoutExtension(saveFileDialog.FileName), saveFileDialog.FilterIndex);
+
+                controller.exportar(dtgMovimentos, Path.GetDirectoryName(saveFileDialog.FileName), Path.GetFileName(saveFileDialog.FileName), saveFileDialog.FilterIndex);
             }
         }
 
@@ -321,6 +322,42 @@ namespace RegistoMovimentos
         {
             Formproducao form = new Formproducao();
             form.Show();
+        }
+
+        private void btnExport_Clientes_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            // Define as configurações do SaveFileDialog
+            saveFileDialog.Filter = "Arquivos Excel (*.xlsx)|*.xlsx|Ficheiro PDF (*.pdf)|*.pdf";
+            saveFileDialog.Title = "Escolha o local para salvar o arquivo";
+            saveFileDialog.FileName = "NomeDoArquivo";
+
+            // Abre a janela de diálogo para salvar o arquivo
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Chama a função Exportar passando o DataGridView, o caminho e o nome do arquivo e tipo
+
+                controller.exportar(dtgClientes, Path.GetDirectoryName(saveFileDialog.FileName), Path.GetFileName(saveFileDialog.FileName), saveFileDialog.FilterIndex);
+            }
+        }
+
+        private void btnExport_Listagens_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            // Define as configurações do SaveFileDialog
+            saveFileDialog.Filter = "Arquivos Excel (*.xlsx)|*.xlsx|Ficheiro PDF (*.pdf)|*.pdf";
+            saveFileDialog.Title = "Escolha o local para salvar o arquivo";
+            saveFileDialog.FileName = "NomeDoArquivo";
+
+            // Abre a janela de diálogo para salvar o arquivo
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Chama a função Exportar passando o DataGridView, o caminho e o nome do arquivo e tipo
+
+                controller.exportar(dtgListagens, Path.GetDirectoryName(saveFileDialog.FileName), Path.GetFileName(saveFileDialog.FileName), saveFileDialog.FilterIndex);
+            }
         }
     }
 

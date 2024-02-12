@@ -19,8 +19,9 @@ namespace RegistoMovimentos.Persistence
         public void exportarPDF(DataGridView dataGridView, string caminho, string nomeArquivo)
         {
             // Cria um documento PDF
-            string caminhoArquivo = Path.Combine(caminho, $"{nomeArquivo}.pdf");
+            string caminhoArquivo = Path.Combine(caminho, nomeArquivo);
             PdfWriter writer = new PdfWriter(caminhoArquivo);
+
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
@@ -33,7 +34,7 @@ namespace RegistoMovimentos.Persistence
             document.Add(subtitle);
 
             // Adicionar logo da empresa
-            string caminhoLogo = Path.Combine("C:\\Users\\admin\\Source\\Repos\\Revuada\\RegistoMovimentos\\NewFolder", "clix_logo.png");
+            string caminhoLogo = Path.Combine("C:\\Users\\silvi\\source\\repos\\RegistoMovimentos\\Recursos\\", "clix_logo.png");
             iText.Layout.Element.Image logo = new iText.Layout.Element.Image(ImageDataFactory.Create(caminhoLogo));
             document.Add(logo);
 
