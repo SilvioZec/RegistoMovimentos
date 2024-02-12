@@ -287,5 +287,22 @@ namespace RegistoMovimentos.Facade_presentation
             anos.Insert(0, "Todos");
             return anos;
         }
+
+
+        //============================================================================== EXPORTAR
+
+        public void exportar(DataGridView dtg, string fileName, string filePath, int tipo)
+        {
+            if (tipo == 1)
+            {
+                ExcelConverter converter = new ExcelConverter();
+                converter.ExportarParaExcel(dtg, filePath, fileName);
+            }
+            if (tipo == 2)
+            {
+                PdfExporter converter = new PdfExporter();
+                converter.exportarPDF(dtg, filePath, fileName);
+            }
+        }
     }
 }

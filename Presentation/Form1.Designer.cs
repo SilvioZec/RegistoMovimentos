@@ -30,6 +30,7 @@
         {
             tbcForm = new TabControl();
             Movimentos = new TabPage();
+            btnExport_Movimentos = new Button();
             btnUpdate_Movimentos = new Button();
             btnRemove_Movimentos = new Button();
             btnAdd_Movimentos = new Button();
@@ -47,6 +48,7 @@
             maskedTextBox_Movimentos = new MaskedTextBox();
             dateTimePicker_Movimentos = new DateTimePicker();
             Clientes = new TabPage();
+            btnExport_Clientes = new Button();
             btnUpdate_Clientes = new Button();
             btnRemove_Clientes = new Button();
             dtgClientes = new DataGridView();
@@ -58,6 +60,7 @@
             txtDesignacao_Clientes = new TextBox();
             txtNif_Clientes = new TextBox();
             Listagens = new TabPage();
+            btnExport_Listagens = new Button();
             gpxDatas_Listagens = new GroupBox();
             label11 = new Label();
             label10 = new Label();
@@ -76,6 +79,7 @@
             chkDebito = new CheckBox();
             btnListaSaldos = new Button();
             dtgListagens = new DataGridView();
+            btnProducao = new Button();
             tbcForm.SuspendLayout();
             Movimentos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtgMovimentos).BeginInit();
@@ -95,13 +99,16 @@
             tbcForm.Location = new Point(26, 25);
             tbcForm.Margin = new Padding(6);
             tbcForm.Name = "tbcForm";
+            tbcForm.Padding = new Point(25, 15);
             tbcForm.SelectedIndex = 0;
-            tbcForm.Size = new Size(2108, 988);
+            tbcForm.Size = new Size(2108, 1091);
             tbcForm.TabIndex = 7;
             // 
             // Movimentos
             // 
             Movimentos.BackColor = Color.Transparent;
+            Movimentos.Controls.Add(btnProducao);
+            Movimentos.Controls.Add(btnExport_Movimentos);
             Movimentos.Controls.Add(btnUpdate_Movimentos);
             Movimentos.Controls.Add(btnRemove_Movimentos);
             Movimentos.Controls.Add(btnAdd_Movimentos);
@@ -118,13 +125,23 @@
             Movimentos.Controls.Add(label1);
             Movimentos.Controls.Add(maskedTextBox_Movimentos);
             Movimentos.Controls.Add(dateTimePicker_Movimentos);
-            Movimentos.Location = new Point(10, 58);
+            Movimentos.Location = new Point(10, 78);
             Movimentos.Margin = new Padding(6);
             Movimentos.Name = "Movimentos";
             Movimentos.Padding = new Padding(6);
-            Movimentos.Size = new Size(2088, 920);
+            Movimentos.Size = new Size(2088, 1003);
             Movimentos.TabIndex = 0;
             Movimentos.Text = "Movimentos";
+            // 
+            // btnExport_Movimentos
+            // 
+            btnExport_Movimentos.Location = new Point(1867, 932);
+            btnExport_Movimentos.Name = "btnExport_Movimentos";
+            btnExport_Movimentos.Size = new Size(188, 58);
+            btnExport_Movimentos.TabIndex = 18;
+            btnExport_Movimentos.Text = "Exportar";
+            btnExport_Movimentos.UseVisualStyleBackColor = true;
+            btnExport_Movimentos.Click += btnExport_Movimentos_Click;
             // 
             // btnUpdate_Movimentos
             // 
@@ -293,6 +310,7 @@
             // 
             // Clientes
             // 
+            Clientes.Controls.Add(btnExport_Clientes);
             Clientes.Controls.Add(btnUpdate_Clientes);
             Clientes.Controls.Add(btnRemove_Clientes);
             Clientes.Controls.Add(dtgClientes);
@@ -303,18 +321,27 @@
             Clientes.Controls.Add(txtMarcador_Clientes);
             Clientes.Controls.Add(txtDesignacao_Clientes);
             Clientes.Controls.Add(txtNif_Clientes);
-            Clientes.Location = new Point(10, 58);
+            Clientes.Location = new Point(10, 78);
             Clientes.Margin = new Padding(6);
             Clientes.Name = "Clientes";
             Clientes.Padding = new Padding(6);
-            Clientes.Size = new Size(2088, 920);
+            Clientes.Size = new Size(2088, 1003);
             Clientes.TabIndex = 1;
             Clientes.Text = "Clientes";
             Clientes.UseVisualStyleBackColor = true;
             // 
+            // btnExport_Clientes
+            // 
+            btnExport_Clientes.Location = new Point(1867, 932);
+            btnExport_Clientes.Name = "btnExport_Clientes";
+            btnExport_Clientes.Size = new Size(188, 58);
+            btnExport_Clientes.TabIndex = 19;
+            btnExport_Clientes.Text = "Exportar";
+            btnExport_Clientes.UseVisualStyleBackColor = true;
+            // 
             // btnUpdate_Clientes
             // 
-            btnUpdate_Clientes.Location = new Point(948, 855);
+            btnUpdate_Clientes.Location = new Point(877, 145);
             btnUpdate_Clientes.Margin = new Padding(6);
             btnUpdate_Clientes.Name = "btnUpdate_Clientes";
             btnUpdate_Clientes.Size = new Size(574, 59);
@@ -326,7 +353,7 @@
             // 
             // btnRemove_Clientes
             // 
-            btnRemove_Clientes.Location = new Point(40, 855);
+            btnRemove_Clientes.Location = new Point(232, 145);
             btnRemove_Clientes.Margin = new Padding(6);
             btnRemove_Clientes.Name = "btnRemove_Clientes";
             btnRemove_Clientes.Size = new Size(574, 59);
@@ -342,13 +369,13 @@
             dtgClientes.AllowUserToDeleteRows = false;
             dtgClientes.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dtgClientes.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dtgClientes.Location = new Point(40, 139);
+            dtgClientes.Location = new Point(45, 234);
             dtgClientes.Margin = new Padding(6);
             dtgClientes.Name = "dtgClientes";
             dtgClientes.RowHeadersVisible = false;
             dtgClientes.RowHeadersWidth = 51;
             dtgClientes.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dtgClientes.Size = new Size(1995, 674);
+            dtgClientes.Size = new Size(2010, 674);
             dtgClientes.TabIndex = 7;
             dtgClientes.TabStop = false;
             // 
@@ -420,19 +447,30 @@
             // 
             // Listagens
             // 
+            Listagens.Controls.Add(btnExport_Listagens);
             Listagens.Controls.Add(gpxDatas_Listagens);
             Listagens.Controls.Add(gpxMarcadores_Listagens);
             Listagens.Controls.Add(chkCredito);
             Listagens.Controls.Add(chkDebito);
             Listagens.Controls.Add(btnListaSaldos);
             Listagens.Controls.Add(dtgListagens);
-            Listagens.Location = new Point(10, 58);
+            Listagens.Location = new Point(10, 78);
             Listagens.Margin = new Padding(6);
             Listagens.Name = "Listagens";
-            Listagens.Size = new Size(2088, 920);
+            Listagens.Padding = new Padding(6);
+            Listagens.Size = new Size(2088, 1003);
             Listagens.TabIndex = 2;
             Listagens.Text = "Listagens";
             Listagens.UseVisualStyleBackColor = true;
+            // 
+            // btnExport_Listagens
+            // 
+            btnExport_Listagens.Location = new Point(1867, 932);
+            btnExport_Listagens.Name = "btnExport_Listagens";
+            btnExport_Listagens.Size = new Size(188, 58);
+            btnExport_Listagens.TabIndex = 19;
+            btnExport_Listagens.Text = "Exportar";
+            btnExport_Listagens.UseVisualStyleBackColor = true;
             // 
             // gpxDatas_Listagens
             // 
@@ -585,7 +623,7 @@
             chkCredito.AutoSize = true;
             chkCredito.Checked = true;
             chkCredito.CheckState = CheckState.Checked;
-            chkCredito.Location = new Point(206, 90);
+            chkCredito.Location = new Point(212, 96);
             chkCredito.Margin = new Padding(6);
             chkCredito.Name = "chkCredito";
             chkCredito.Size = new Size(154, 45);
@@ -598,7 +636,7 @@
             chkDebito.AutoSize = true;
             chkDebito.Checked = true;
             chkDebito.CheckState = CheckState.Checked;
-            chkDebito.Location = new Point(30, 90);
+            chkDebito.Location = new Point(36, 96);
             chkDebito.Margin = new Padding(6);
             chkDebito.Name = "chkDebito";
             chkDebito.Size = new Size(146, 45);
@@ -624,22 +662,32 @@
             dtgListagens.AllowUserToDeleteRows = false;
             dtgListagens.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dtgListagens.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dtgListagens.Location = new Point(6, 238);
+            dtgListagens.Location = new Point(45, 234);
             dtgListagens.Margin = new Padding(6);
             dtgListagens.Name = "dtgListagens";
             dtgListagens.ReadOnly = true;
             dtgListagens.RowHeadersVisible = false;
             dtgListagens.RowHeadersWidth = 51;
             dtgListagens.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dtgListagens.Size = new Size(2078, 676);
+            dtgListagens.Size = new Size(2010, 674);
             dtgListagens.TabIndex = 15;
             dtgListagens.TabStop = false;
+            // 
+            // btnProducao
+            // 
+            btnProducao.Location = new Point(45, 942);
+            btnProducao.Name = "btnProducao";
+            btnProducao.Size = new Size(188, 58);
+            btnProducao.TabIndex = 19;
+            btnProducao.Text = "Producao";
+            btnProducao.UseVisualStyleBackColor = true;
+            btnProducao.Click += btnProducao_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(2159, 1037);
+            ClientSize = new Size(2154, 1140);
             Controls.Add(tbcForm);
             Margin = new Padding(6);
             Name = "Form1";
@@ -712,5 +760,9 @@
         private ComboBox cbxAnos_Listagem;
         private Label label11;
         private Label label10;
+        private Button btnExport_Movimentos;
+        private Button btnExport_Clientes;
+        private Button btnExport_Listagens;
+        private Button btnProducao;
     }
 }

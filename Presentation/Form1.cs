@@ -2,6 +2,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using RegistoMovimentos.Business_code;
 using RegistoMovimentos.Business_data;
 using RegistoMovimentos.Facade_presentation;
+using RegistoMovimentos.Presentation;
 using System.Globalization;
 using System.Windows.Forms;
 
@@ -147,7 +148,7 @@ namespace RegistoMovimentos
         }
         private void atualizaDtgMovimentos()
         {
-            List <Movimento_datagrid> lista = controller.listarMovimentos();
+            List<Movimento_datagrid> lista = controller.listarMovimentos();
             dtgMovimentos.DataSource = lista;
             dtgMovimentos.Columns["Id"].ReadOnly = true;
             dtgMovimentos.Columns["Cliente"].ReadOnly = true;
@@ -298,5 +299,29 @@ namespace RegistoMovimentos
         {
             dtgListagens.DataSource = controller.listarSaldosData(dtpSaldo_Listagens.Value);
         }
+
+        private void btnExport_Movimentos_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            // Define as configurações do SaveFileDialog
+            saveFileDialog.Filter = "Arquivos Excel (*.xlsx)|*.xlsx|Ficheiro PDF (*.pdf)|*.pdf";
+            saveFileDialog.Title = "Escolha o local para salvar o arquivo";
+            saveFileDialog.FileName = "NomeDoArquivo";
+
+            // Abre a janela de diálogo para salvar o arquivo
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Chama a função Exportar passando o DataGridView, o caminho e o nome do arquivo e tipo
+                controller.exportar(dtgMovimentos, Path.GetDirectoryName(saveFileDialog.FileName), Path.GetFileNameWithoutExtension(saveFileDialog.FileName), saveFileDialog.FilterIndex);
+            }
+        }
+
+        private void btnProducao_Click(object sender, EventArgs e)
+        {
+            Formproducao form = new Formproducao();
+            form.Show();
+        }
     }
+
 }
